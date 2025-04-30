@@ -1,14 +1,18 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
 from typing import TypedDict
 from langgraph.graph import StateGraph
 
 # imports from sibling 'agent' folder
-from ..agent.schema_extractor import extract_schema
-from ..agent.validator import check_tsql_compatibility
-from ..agent.transformer import transform_sql
-from ..agent.performance_tuner import suggest_optimizations
-from ..agent.refactor_sp import refactor_procedure
-from ..agent.metadata_logger import log_metadata
-from ..agent.prompt_engine import load_prompt
+from db_agent.schema_extractor import extract_schema
+from db_agent.validator import check_tsql_compatibility
+from db_agent.transformer import transform_sql
+from db_agent.performance_tuner import suggest_optimizations
+from db_agent.refactor_sp import refactor_procedure
+from db_agent.metadata_logger import log_metadata
+from db_agent.prompt_engine import load_prompt
 
 
 # Define shared LangGraph state
