@@ -2,7 +2,6 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
-from typing import TypedDict
 from langgraph.graph import StateGraph
 
 # imports from sibling 'agent' folder
@@ -17,14 +16,9 @@ from devops_agent.deployment_manager import recommend_deployment_strategy
 
 
 
-# Define shared LangGraph state
-class DevOpsState(TypedDict):
-    input: str
-    output: str
 
-# Later you will import other components like autoscaler, deployment_manager, etc.
 
-def devops_agent_main(infra_code: str, prompt_name: str = "transform_infra.j2") -> DevOpsState:
+def devops_agent_main(infra_code: str, prompt_name: str = "devops_infra.j2") -> DevOpsState:
     """
     Orchestrates the DevOps agent pipeline using LangGraph.
 
@@ -63,7 +57,9 @@ def devops_agent_main(infra_code: str, prompt_name: str = "transform_infra.j2") 
 
     # Compile graph and run the pipeline
     graph = builder.compile()
-    return graph.invoke({"input": infra_code, "output": ""})
+    return graph.invoke({"Devops_input": infra_code, "Devops_output": ""})
+
+    #return graph.invoke(DevOpsState(input=infra_code, output=""))
 
 # if __name__ == "__main__":
 #     # Dummy test input

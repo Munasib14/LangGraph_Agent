@@ -10,7 +10,7 @@ def suggest_monitoring_integration(state: DevOpsState) -> DevOpsState:
     Returns:
         DevOpsState: Updated state with appended monitoring recommendations.
     """
-    ci_cd_script = state.output  # The CI/CD script to append suggestions to
+    ci_cd_script = state.Devops_output  # The CI/CD script to append suggestions to
     pipeline_code = ci_cd_script  # Initialize pipeline_code with the current script
 
     recommendations = []
@@ -29,5 +29,5 @@ def suggest_monitoring_integration(state: DevOpsState) -> DevOpsState:
     if recommendations:
         pipeline_code += "\n\n// -- Monitoring Suggestions --\n" + "\n".join(f"// {s}" for s in recommendations)
 
-    state["output"] = pipeline_code  # Update the state with the modified script
+    state.Devops_output = pipeline_code  # Update the state with the modified script
     return state

@@ -2,8 +2,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel
-#from services.agent.db_agent.langgraph.db_graph import db_agent_main
-#from services.agent.devops_agent.langgraph.devops_graph import devops_agent_main
+# from services.agent.db_agent.langgraph.db_graph import db_agent_main
+# from services.agent.devops_agent.langgraph.devops_graph import devops_agent_main
 from fastapi_app.app.services.agent.db_agent.langgraph.db_graph import db_agent_main
 from fastapi_app.app.services.agent.devops_agent.langgraph.devops_graph import devops_agent_main
 from jinja2 import Environment, FileSystemLoader
@@ -49,7 +49,7 @@ async def run_db_agent(request: SQLRequest):
 
 @app.post("/run-devops-agent/")
 async def run_devops_agent(request: DevOpsRequest):
-    prompt = request.prompt_name.strip() or "infra_identity.j2"
+    prompt = request.prompt_name.strip() or "devops_infra.j2"
     result = devops_agent_main(request.infra_description, prompt_name=prompt)
     return {"result": result}
 

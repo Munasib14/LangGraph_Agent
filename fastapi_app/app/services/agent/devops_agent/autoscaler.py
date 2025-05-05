@@ -1,5 +1,5 @@
 def suggest_jenkins_optimizations(state: dict) -> dict:
-    jenkins_script = state["output"]
+    jenkins_script = state.Devops_output
     suggestions = []
 
     if "agent any" in jenkins_script.lower():
@@ -15,6 +15,6 @@ def suggest_jenkins_optimizations(state: dict) -> dict:
         suggestions.append("Use parameters to make the pipeline reusable for different environments or builds.")
 
     if suggestions:
-        state["output"] += "\n\n// -- Jenkins Pipeline Optimization Suggestions --\n" + "\n".join(f"// - {s}" for s in suggestions)
+        state.Devops_output += "\n\n// -- Jenkins Pipeline Optimization Suggestions --\n" + "\n".join(f"// - {s}" for s in suggestions)
 
     return state

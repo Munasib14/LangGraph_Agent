@@ -18,15 +18,18 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 # Initialize Groq client
 client = Groq(api_key=GROQ_API_KEY)
 
-def transform_infra(state: DevOpsState, prompt_template="transform_infra.j2") -> DevOpsState:
+def transform_infra(state: DevOpsState, prompt_template="devops_infra.j2") -> DevOpsState:
     """
     Uses Groq model to transform infrastructure code.
     """
-    input_infra = state["input"]
-    context = {"input_infra": input_infra}
+    input_infra = state.Devops_input # Input infrastructure code (YAML, Terraform, etc.)
     
-    # Load prompt using jinja2
+    # ✅ Wrap input_infra in a dictionary for Jinja2
+    context = {"infra_code": input_infra}
+    
+    # Load prompt using jinja2 with proper context
     prompt = load_prompt(prompt_template, context)
+    
 
     # Call Groq model
     response = client.chat.completions.create(
@@ -37,6 +40,6 @@ def transform_infra(state: DevOpsState, prompt_template="transform_infra.j2") ->
     )
 
     transformed = response.choices[0].message.content.strip()
-    state["output"] += f"\n# Transformed Infra\n{transformed}"
+    state.Devops_output += f"\n# Transformed Infra\n{transformed}"
     return state
 

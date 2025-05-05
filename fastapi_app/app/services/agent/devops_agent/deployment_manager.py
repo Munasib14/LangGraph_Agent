@@ -10,7 +10,7 @@ def recommend_deployment_strategy(state: DevOpsState) -> DevOpsState:
     Returns:
         DevOpsState: Updated state with deployment strategy suggestions.
     """
-    jenkins_script = state["output"]
+    jenkins_script = state.Devops_output
 
     # Recommendations specific to containerized deployments using DockerHub
     if "dockerhub" in jenkins_script.lower():
@@ -33,5 +33,5 @@ def recommend_deployment_strategy(state: DevOpsState) -> DevOpsState:
             "Use proper error handling and post-build actions to ensure stability."
         )
 
-    state["output"] = jenkins_script
+    state.Devops_output = jenkins_script
     return state

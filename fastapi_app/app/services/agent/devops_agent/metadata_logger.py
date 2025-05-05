@@ -16,8 +16,8 @@ def log_metadata(state: DevOpsState) -> DevOpsState:
     # Compose a final log object similar to DB agent format
     final_log = {
         "procedure_name": "devops_transform_infra",  # Analogous field
-        "original_code": input["input"],
-        "converted_code": state["output"],
+        "original_code": state.Devops_input,
+        "converted_code": state.Devops_output,
         "compatibility_flags": [],  # You can add logic to detect these later
         "optimization_suggestions": [],
         "comments": "",
