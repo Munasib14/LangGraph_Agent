@@ -12,5 +12,10 @@ env = Environment(
 )
 
 def load_prompt(template_name: str, context: dict) -> str:
-    template = env.get_template(template_name)
-    return template.render(context)
+    try:
+        template = env.get_template(template_name)
+        return template.render(context)
+    except Exception as e:
+        print(f"Error loading template {template_name}: {str(e)}")
+        raise
+

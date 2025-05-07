@@ -4,6 +4,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")
 
 from langgraph.graph import StateGraph
 
+from dotenv import load_dotenv
+import os
+from pathlib import Path
+
 # imports from sibling 'agent' folder
 from devops_agent.devops_types import DevOpsState
 from devops_agent.devops_types import refactor_devops
@@ -12,13 +16,13 @@ from devops_agent.metadata_logger import log_metadata
 from devops_agent.autoscaler import suggest_jenkins_optimizations
 from devops_agent.monitoring_tool import suggest_monitoring_integration
 from devops_agent.deployment_manager import recommend_deployment_strategy
+from devops_agent.github_pusher import push_to_github
 
 
+load_dotenv(Path(__file__).resolve().parents[4] / ".env")
 
 
-
-
-def devops_agent_main(infra_code: str, prompt_name: str = "devops_infra.j2") -> DevOpsState:
+def devops_agent_main(infra_code: str, prompt_name: str = "devops_infra.j2", gh_token: str = None, gh_repo: str = None ) -> DevOpsState:
     """
     Orchestrates the DevOps agent pipeline using LangGraph.
 
@@ -44,6 +48,7 @@ def devops_agent_main(infra_code: str, prompt_name: str = "devops_infra.j2") -> 
     builder.add_node("autoscale", suggest_jenkins_optimizations)
     builder.add_node("add_monitoring", suggest_monitoring_integration)
     builder.add_node("deployment_strategy", recommend_deployment_strategy)
+    builder.add_node("push_to_github", push_to_github)
 
     
 
@@ -54,10 +59,19 @@ def devops_agent_main(infra_code: str, prompt_name: str = "devops_infra.j2") -> 
     builder.add_edge("log_metadata", "autoscale")
     builder.add_edge("autoscale", "add_monitoring")
     builder.add_edge("add_monitoring", "deployment_strategy")
+    builder.add_edge("deployment_strategy", "push_to_github")
 
     # Compile graph and run the pipeline
     graph = builder.compile()
-    return graph.invoke({"Devops_input": infra_code, "Devops_output": ""})
+    # return graph.invoke({"Devops_input": infra_code, "Devops_output": ""})
+
+    # Pass the GitHub token and repository to the graph input
+    return graph.invoke({
+        "Devops_input": infra_code,
+        "Devops_output": "",
+        "gh_token": gh_token,    # Add the GitHub token here
+        "gh_repo": gh_repo       # Add the GitHub repository here
+    })
 
     #return graph.invoke(DevOpsState(input=infra_code, output=""))
 

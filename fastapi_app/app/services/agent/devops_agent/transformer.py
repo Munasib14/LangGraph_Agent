@@ -25,7 +25,8 @@ def transform_infra(state: DevOpsState, prompt_template="devops_infra.j2") -> De
     input_infra = state.Devops_input # Input infrastructure code (YAML, Terraform, etc.)
     
     # ✅ Wrap input_infra in a dictionary for Jinja2
-    context = {"infra_code": input_infra}
+    # context = {"infra_code": input_infra}
+    context = {"infra_description": input_infra}
     
     # Load prompt using jinja2 with proper context
     prompt = load_prompt(prompt_template, context)
