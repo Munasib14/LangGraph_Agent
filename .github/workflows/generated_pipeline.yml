@@ -1,0 +1,24 @@
+
+# Transformed Infra
+```yml
+name: Build and Test
+on: [push]
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build
+        run: make build
+      - name: Test
+        run: make test
+```
+# Refactoring Suggestions
+# Follow naming conventions for Jenkins resources
+
+// -- Jenkins Pipeline Optimization Suggestions --
+// - Include a 'post' section for better visibility into pipeline success or failure.
+// - Use parameters to make the pipeline reusable for different environments or builds.
+
+# CI/CD Tip: Automate your deployment process with stages like Build, Test, and Deploy. Use proper error handling and post-build actions to ensure stability.
