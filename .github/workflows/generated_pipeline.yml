@@ -14,17 +14,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Setup Java
-        uses: actions/setup-java@v2
-        with:
-          java-version: '11'
-
-      - name: Build
-        run: ./gradlew build
-
-      - name: Test
-        run: ./gradlew test
+      - name: Build and Test
+        run: ./gradlew build test
 ```
 # Refactoring Suggestions
 # Follow naming conventions for Jenkins resources
