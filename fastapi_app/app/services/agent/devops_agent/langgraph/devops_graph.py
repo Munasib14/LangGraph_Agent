@@ -22,7 +22,7 @@ from devops_agent.github_pusher import push_to_github
 load_dotenv(Path(__file__).resolve().parents[4] / ".env")
 
 
-def devops_agent_main(infra_code: str, prompt_name: str = "devops_infra.j2", gh_token: str = None, gh_repo: str = None ) -> DevOpsState:
+def devops_agent_main(infra_code: str, prompt_name: str = "terraform_module.j2", gh_token: str = None, gh_repo: str = None ) -> DevOpsState:
     """
     Orchestrates the DevOps agent pipeline using LangGraph.
 

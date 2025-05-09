@@ -62,7 +62,7 @@ class DevOpsRequest(BaseModel):
 
 @app.post("/run-devops-agent/")
 async def run_devops_agent(request: DevOpsRequest):
-    prompt = (request.prompt_name or "").strip() or "devops_infra.j2"
+    prompt = (request.prompt_name or "").strip() or "terraform_module.j2"
 
     # Load GitHub credentials from environment
     gh_token = os.getenv("GH_TOKEN")

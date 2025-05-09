@@ -18,7 +18,7 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 # Initialize Groq client
 client = Groq(api_key=GROQ_API_KEY)
 
-def transform_infra(state: DevOpsState, prompt_template="devops_infra.j2") -> DevOpsState:
+def transform_infra(state: DevOpsState, prompt_template="terraform_module.j2") -> DevOpsState:
     """
     Uses Groq model to transform infrastructure code.
     """
