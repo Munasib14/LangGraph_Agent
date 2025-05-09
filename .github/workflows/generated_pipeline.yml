@@ -1,7 +1,7 @@
 
 # Transformed Infra
 ```yml
-name: Terraform Workflow
+name: Terraform GitHub Actions
 
 on:
   push:
@@ -13,12 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: "1.2.0"
+          terraform_version: "1.3.5"
 
       - name: Terraform Init
         run: terraform init
@@ -32,17 +32,14 @@ jobs:
       - name: Terraform Apply
         run: |
           terraform apply -auto-approve
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'us-east-1'
+          echo "Terraform apply completed"
 ```
 # Refactoring Suggestions
 # Consider splitting resources into modules
 # Use variables for AMI and instance type
 # Follow naming conventions for Jenkins resources
 
-// -- Jenkins Pipeline Optimization Suggestions --
+// -- Munasib Pipeline Optimization Suggestions --
 // - Include a 'post' section for better visibility into pipeline success or failure.
 // - Use parameters to make the pipeline reusable for different environments or builds.
 
