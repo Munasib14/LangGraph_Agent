@@ -23,3 +23,10 @@ Improve it by:
 # {{ input_infra }}
 
 # ## Output GitHub Actions Workflow:
+
+
+
+{
+  "infra_description": "pipeline { agent any stages { stage('Build') { steps { sh './gradlew build' } } stage('Test') { steps { sh './gradlew test' } } } }",
+  "prompt_name": "devops_infra.j2"
+}

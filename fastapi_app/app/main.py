@@ -3,9 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel
 import logging
+from fastapi_app.app.services.agent.devops_agent.devops_types import DevOpsState
 # from services.agent.db_agent.langgraph.db_graph import db_agent_main
 # from services.agent.devops_agent.langgraph.devops_graph import devops_agent_main
-from fastapi_app.app.services.agent.db_agent.langgraph.db_graph import db_agent_main
+# from fastapi_app.app.services.agent.db_agent.langgraph.db_graph import db_agent_main
 from fastapi_app.app.services.agent.devops_agent.langgraph.devops_graph import devops_agent_main
 from fastapi_app.app.services.agent.devops_agent.github_pusher import push_to_github
 
@@ -28,9 +29,9 @@ app.add_middleware(
 )
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-PROMPT_DIR = os.path.join(BASE_DIR, "app", "services","db_agent", "agent", "prompts")
+# PROMPT_DIR = os.path.join(BASE_DIR, "app", "services","db_agent", "agent", "prompts")
 PROMPT_DIR_DEVOPS = os.path.join(BASE_DIR, "app","services", "agent", "devops_agent", "prompts")
-env = Environment(loader=FileSystemLoader(PROMPT_DIR))
+# env = Environment(loader=FileSystemLoader(PROMPT_DIR))
 env_devops = Environment(loader=FileSystemLoader(PROMPT_DIR_DEVOPS))
 
 
@@ -38,19 +39,19 @@ env_devops = Environment(loader=FileSystemLoader(PROMPT_DIR_DEVOPS))
 async def root():
     return {"message": "DB Agent abd DevOps Agent FastAPI Server is running🚀"}
 
-class SQLRequest(BaseModel):
-    sql_code: str
-    prompt_name: str
+# class SQLRequest(BaseModel):
+#     sql_code: str
+#     prompt_name: str
     
 class DevOpsRequest(BaseModel):
     infra_description: str
     prompt_name: str
 
-@app.post("/run-db-agent/")
-async def run_db_agent(request: SQLRequest):
-    prompt = request.prompt_name.strip() or "transform_identity.j2"
-    result = db_agent_main(request.sql_code, prompt_name=prompt)
-    return {"result": result}
+# @app.post("/run-db-agent/")
+# async def run_db_agent(request: SQLRequest):
+#     prompt = request.prompt_name.strip() or "transform_identity.j2"
+#     result = db_agent_main(request.sql_code, prompt_name=prompt)
+#     return {"result": result}
 
 # @app.post("/run-devops-agent/")
 # async def run_devops_agent(request: DevOpsRequest):
@@ -58,10 +59,11 @@ async def run_db_agent(request: SQLRequest):
 #     result = devops_agent_main(request.infra_description, prompt_name=prompt)
 #     return {"result": result}
 
+
 @app.post("/run-devops-agent/")
 async def run_devops_agent(request: DevOpsRequest):
     prompt = (request.prompt_name or "").strip() or "devops_infra.j2"
-    
+
     # Load GitHub credentials from environment
     gh_token = os.getenv("GH_TOKEN")
     gh_repo = os.getenv("GH_REPO")  # e.g., "your-org/your-repo"
@@ -92,8 +94,18 @@ async def run_devops_agent(request: DevOpsRequest):
     try:
         workflow_path = ".github/workflows/generated_pipeline.yml"
         logger.info(f"Pushing generated workflow to GitHub: {gh_repo}/{workflow_path}")
-        push_to_github(gh_repo, workflow_path, result["output"])
-        
+
+        state = DevOpsState(
+            Devops_input=request.infra_description,  # ✅ Add this
+            Devops_output=result["Devops_output"],
+            gh_token=gh_token,
+            gh_repo=gh_repo,
+            logs=[]
+            
+        )
+
+        push_to_github(state)
+
         return {
             "result": result,
             "status": "Workflow pushed to GitHub successfully"
@@ -107,14 +119,14 @@ async def run_devops_agent(request: DevOpsRequest):
             "error": str(e)
         }
 
-@app.get("/get-prompt/{prompt_name}")
-async def get_prompt(prompt_name: str):
-    try:
-        template = env.get_template(prompt_name)
-        rendered = template.render({"input_sql": "-- Your SQL here"})
-        return {"prompt_content": rendered}
-    except Exception as e:
-        raise HTTPException(status_code=404, detail=str(e))
+# @app.get("/get-prompt/{prompt_name}")
+# async def get_prompt(prompt_name: str):
+#     try:
+#         template = env.get_template(prompt_name)
+#         rendered = template.render({"input_sql": "-- Your SQL here"})
+#         return {"prompt_content": rendered}
+#     except Exception as e:
+#         raise HTTPException(status_code=404, detail=str(e))
     
     
 @app.get("/get-devops-prompt/{prompt_name}")
