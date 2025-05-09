@@ -1,7 +1,7 @@
 
 # Transformed Infra
 ```yml
-name: Terraform Workflow
+name: Terraform GitHub Actions
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: "1.2.0"
+          terraform_version: "1.2.6"
 
       - name: Terraform Init
         run: terraform init
@@ -35,16 +35,14 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'us-east-1'
+          AWS_DEFAULT_REGION: 'us-west-2'
 ```
 # Refactoring Suggestions
-# Consider splitting resources into modules
-# Use variables for AMI and instance type
-# Follow naming conventions for Jenkins resources
+# Consider splitting Terraform resources into reusable modules
+# Use variables for AMI and instance type in Terraform
+# Follow Terraform naming conventions for consistency
 
 # -- Terraform Optimization Suggestions --
 # - Use workspaces for dev/staging/prod. Automate with GitHub Actions using init, validate, plan, and apply steps. Store state securely using S3 and DynamoDB.
-
-# CI/CD Tip: Automate your deployment process with stages like Build, Test, and Deploy. Use proper error handling and post-build actions to ensure stability.
 
 # Terraform Tip: Use separate workspaces for dev/staging/prod environments. Automate Terraform with GitHub Actions using init, validate, plan, and apply stages. Store the Terraform state securely (e.g., S3 + DynamoDB for locking).
