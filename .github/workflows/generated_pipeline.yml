@@ -2,30 +2,33 @@
 # Transformed Infra
 ```yml
 name: Build and Test
+
 on:
   push:
     branches:
       - main
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Setup Java
         uses: actions/setup-java@v2
         with:
           java-version: '11'
-      - name: Build
-        run: ./gradlew build
-      - name: Test
-        run: ./gradlew test
+
+      - name: Build and Test
+        run: ./gradlew build test
 ```
 # Refactoring Suggestions
 # Follow naming conventions for Jenkins resources
 
-# -- Terraform Optimization Suggestions --
-# - Use workspaces for dev/staging/prod. Automate with GitHub Actions using init, validate, plan, and apply steps. Store state securely using S3 and DynamoDB.
+// -- Jenkins Pipeline Optimization Suggestions --
+// - Include a 'post' section for better visibility into pipeline success or failure.
+// - Use parameters to make the pipeline reusable for different environments or builds.
 
 # CI/CD Tip: Automate your deployment process with stages like Build, Test, and Deploy. Use proper error handling and post-build actions to ensure stability.
 
