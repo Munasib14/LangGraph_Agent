@@ -1,48 +1,32 @@
 
 # Transformed Infra
 ```yml
-name: Terraform GitHub Actions
-
+name: Build and Test
 on:
   push:
     branches:
       - main
-
 jobs:
-  terraform:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: actions/setup-java@v2
         with:
-          terraform_version: "1.3.5"
-
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Validate
-        run: terraform validate
-
-      - name: Terraform Plan
-        run: terraform plan
-
-      - name: Terraform Apply
-        run: |
-          terraform apply -auto-approve
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'us-east-1'
+          java-version: '11'
+      - name: Build
+        run: ./gradlew build
+      - name: Test
+        run: ./gradlew test
 ```
 # Refactoring Suggestions
-# Consider splitting Terraform resources into reusable modules
-# Use variables for AMI and instance type in Terraform
-# Follow Terraform naming conventions for consistency
+# Follow naming conventions for Jenkins resources
 
 # -- Terraform Optimization Suggestions --
 # - Use workspaces for dev/staging/prod. Automate with GitHub Actions using init, validate, plan, and apply steps. Store state securely using S3 and DynamoDB.
+
+# CI/CD Tip: Automate your deployment process with stages like Build, Test, and Deploy. Use proper error handling and post-build actions to ensure stability.
 
 # Terraform Tip: Use separate workspaces for dev/staging/prod environments. Automate Terraform with GitHub Actions using init, validate, plan, and apply stages. Store the Terraform state securely (e.g., S3 + DynamoDB for locking).
