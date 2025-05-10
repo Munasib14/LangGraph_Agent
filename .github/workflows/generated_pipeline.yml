@@ -14,25 +14,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Setup Java
         uses: actions/setup-java@v2
         with:
           java-version: '11'
-
       - name: Build
         run: ./gradlew build
-
       - name: Test
         run: ./gradlew test
 ```
 # Refactoring Suggestions
 # Follow naming conventions for Jenkins resources
 
-// -- Jenkins Pipeline Optimization Suggestions --
-// - Include a 'post' section for better visibility into pipeline success or failure.
-// - Use parameters to make the pipeline reusable for different environments or builds.
+# -- Terraform Optimization Suggestions --
+# - Use workspaces for dev/staging/prod. Automate with GitHub Actions using init, validate, plan, and apply steps. Store state securely using S3 and DynamoDB.
 
 # CI/CD Tip: Automate your deployment process with stages like Build, Test, and Deploy. Use proper error handling and post-build actions to ensure stability.
-
-# Terraform Tip: Use separate workspaces for dev/staging/prod environments. Automate Terraform with GitHub Actions using init, validate, plan, and apply stages. Store the Terraform state securely (e.g., S3 + DynamoDB for locking).
