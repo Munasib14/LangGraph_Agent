@@ -20,8 +20,11 @@ jobs:
         with:
           java-version: '11'
 
-      - name: Build and Test
-        run: ./gradlew build test
+      - name: Build
+        run: ./gradlew build
+
+      - name: Test
+        run: ./gradlew test
 ```
 # Refactoring Suggestions
 # Follow naming conventions for Jenkins resources
