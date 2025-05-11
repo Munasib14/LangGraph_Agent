@@ -2,7 +2,7 @@ import os
 from github import Github
 from github.GithubException import GithubException, UnknownObjectException
 from dotenv import load_dotenv
-from .devops_types import DevOpsState  # adjust if necessary
+from .devops_types import DevOpsState  # Adjust path if necessary
 
 # Load environment variables
 load_dotenv()
@@ -28,6 +28,14 @@ def push_to_github(state: DevOpsState) -> DevOpsState:
     if not workflow_content:
         raise ValueError("No workflow content found in `Devops_output` or `output`")
 
+    # ✅ Step 1: Write the file locally
+    local_file_path = os.path.join(os.getcwd(), file_path)
+    os.makedirs(os.path.dirname(local_file_path), exist_ok=True)
+    with open(local_file_path, 'w', encoding='utf-8') as f:
+        f.write(workflow_content)
+    log(f"📁 Local file updated at {local_file_path}")
+
+    # ✅ Step 2: Push to GitHub using PyGithub
     try:
         github_client = Github(token)
         repo = github_client.get_repo(repo_name)
@@ -41,7 +49,7 @@ def push_to_github(state: DevOpsState) -> DevOpsState:
                 sha=contents.sha,
                 branch=branch
             )
-            log(f"✅ GitHub Actions workflow updated in `{repo_name}` on branch `{branch}`")
+            log(f"GitHub Actions workflow updated in `{repo_name}` on branch `{branch}`")
         except UnknownObjectException:
             repo.create_file(
                 path=file_path,
@@ -49,42 +57,14 @@ def push_to_github(state: DevOpsState) -> DevOpsState:
                 content=workflow_content,
                 branch=branch
             )
-            log(f"✅ GitHub Actions workflow created in `{repo_name}` on branch `{branch}`")
+            log(f"GitHub Actions workflow created in `{repo_name}` on branch `{branch}`")
 
         state.github_status = "success"
 
     except GithubException as e:
-        error_msg = f"❌ GitHub push failed: {e.data.get('message', str(e))}"
+        error_msg = f"GitHub push failed: {e.data.get('message', str(e))}"
         log(error_msg)
         state.github_status = "failure"
         raise
 
     return state
-
-
-# if __name__ == "__main__":
-#     sample_yaml = """name: Sample CI
-
-# on:
-#   push:
-#     branches: [ main ]
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
-
-#       - name: Run Python script
-#         run: echo "Hello from GitHub Actions!"
-# """
-
-#     state = DevOpsState(
-#         Devops_input="sample input",  # ✅ REQUIRED
-#         Devops_output=sample_yaml,
-#         gh_token=os.getenv("GH_TOKEN", ""),  # ✅ Ensure this is set in environment
-#         gh_repo=os.getenv("GH_REPO", "your-username/your-repo")  # ✅ Set this properly
-#     )
-
-#     push_to_github(state)

@@ -1,7 +1,7 @@
 
 # Transformed Infra
 ```yml
-name: Terraform GitHub Actions
+name: Terraform Automation
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: "1.3.5"
+          terraform_version: "1.3.3"
 
       - name: Terraform Init
         run: terraform init

@@ -28,7 +28,7 @@ Improve it by:
 
 {
   "infra_description": "pipeline { agent any stages { stage('Build') { steps { sh './gradlew build' } } stage('Test') { steps { sh './gradlew test' } } } }",
-  "prompt_name": "devops_infra.j2"
+  "prompt_name": "jenkins_pipeline.j2"
 }
 
 
