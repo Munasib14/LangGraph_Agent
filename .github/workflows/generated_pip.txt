@@ -1,0 +1,58 @@
+def load_dev_prompt(template_name: str, context: dict) -> str:
+    """
+    Loads and renders a Jinja2 template for the DevOps Agent.
+
+    Args:
+        template_name (str): The name of the prompt template file (including .j2).
+        context (dict): The context to render the template with.
+
+    Returns:
+        str: The rendered prompt template or an error message if something goes wrong.
+    """
+    try:
+        print(f"🧪 Loading from: {DEV_PROMPT_DIR}")
+        print(f"🧪 Template name: {template_name}")
+        print(f"🧪 Context: {context}")
+
+        # Normalize template name
+        template_name = template_name.strip().lower()
+
+        # Check if the template exists
+        full_path = os.path.join(DEV_PROMPT_DIR, template_name)
+        if not os.path.exists(full_path):
+            raise FileNotFoundError(f"Template {template_name} not found in {DEV_PROMPT_DIR}")
+
+        # Load and render the template
+        template = dev_env.get_template(template_name)
+        return template.render(context)
+
+    except Exception as e:
+        print(f"Error loading DevOps template {template_name}: {str(e)}")
+        return f"Error loading template: {str(e)}"
+
+    
+    def transform_infra(state: DevOpsState, prompt_template="devops_infra.j2") -> DevOpsState:
+    """
+    Uses Groq model to transform infrastructure code.
+    """
+    input_infra = state.Devops_input # Input infrastructure code (YAML, Terraform, etc.)
+    
+    # ✅ Wrap input_infra in a dictionary for Jinja2
+    context = {"infra_code": input_infra}
+    
+    # Load prompt using jinja2 with proper context
+    prompt = load_dev_prompt(prompt_template, context)
+    
+
+    # Call Groq model
+    response = client.chat.completions.create(
+        model="llama-4-scout-17b-16e-instruct",  # or another model Groq supports
+        messages=[
+            {"role": "user", "content": prompt}
+        ]
+    )
+
+    transformed = response.choices[0].message.content.strip()
+    state.Devops_output += f"\n# Transformed Infra\n{transformed}"
+    return state
+
