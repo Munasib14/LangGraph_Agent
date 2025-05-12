@@ -1,7 +1,7 @@
 
 # Transformed Infra
 ```yml
-name: Gradle Build and Test
+name: Terraform GitHub Actions
 
 on:
   push:
@@ -9,25 +9,40 @@ on:
       - main
 
 jobs:
-  build-and-test:
+  terraform:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup Java
-        uses: actions/setup-java@v2
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
         with:
-          java-version: '11'
+          terraform_version: "1.2.0"
 
-      - name: Build and Test
-        run: ./gradlew build test
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply
+        run: |
+          terraform apply -auto-approve
+          echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" > terraform.tfvars
+          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> terraform.tfvars
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'us-west-2'
+
+      - name: Terraform Destroy (optional)
+        run: terraform destroy -auto-approve
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'us-west-2'
 ```
-# Refactoring Suggestions
-# Follow naming conventions for Jenkins resources
-
-// -- Jenkins Pipeline Optimization Suggestions --
-// - Include a 'post' section for better visibility into pipeline success or failure.
-// - Use parameters to make the pipeline reusable for different environments or builds.
-
-# CI/CD Tip: Automate your deployment process with stages like Build, Test, and Deploy. Use proper error handling and post-build actions to ensure stability.
