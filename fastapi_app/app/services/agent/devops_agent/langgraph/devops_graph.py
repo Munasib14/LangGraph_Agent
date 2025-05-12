@@ -16,16 +16,15 @@ from devops_agent.metadata_logger import log_metadata
 from devops_agent.autoscaler import suggest_jenkins_optimizations
 from devops_agent.monitoring_tool import suggest_monitoring_integration
 from devops_agent.deployment_manager import recommend_deployment_strategy
-from devops_agent.terraform_linter import terraform_linter
+from fastapi_app.app.services.agent.devops_agent.terraform_validator import terraform_linter, terraform_plan_validator
 from devops_agent.terraform_cost_estimator import terraform_cost_estimator
-from devops_agent.terraform_plan_validator import terraform_plan_validator
 from devops_agent.github_pusher import push_to_github
 
 
 load_dotenv(Path(__file__).resolve().parents[4] / ".env")
 
 
-def devops_agent_main(infra_code: str, prompt_name: str = "terraform_module.j2", gh_token: str = None, gh_repo: str = None) -> DevOpsState:
+def devops_agent_main(infra_code: str, prompt_name: str = "jenkins_pipeline.j2", gh_token: str = None, gh_repo: str = None) -> DevOpsState:
     """
     Orchestrates the DevOps agent pipeline using LangGraph.
 

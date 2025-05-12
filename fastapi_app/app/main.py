@@ -10,6 +10,8 @@ from fastapi_app.app.services.agent.devops_agent.devops_types import DevOpsState
 from fastapi_app.app.services.agent.devops_agent.langgraph.devops_graph import devops_agent_main
 from fastapi_app.app.services.agent.devops_agent.github_pusher import push_to_github
 
+
+
 from jinja2 import Environment, FileSystemLoader
 import os
 import sys
@@ -62,7 +64,7 @@ class DevOpsRequest(BaseModel):
 
 @app.post("/run-devops-agent/")
 async def run_devops_agent(request: DevOpsRequest):
-    prompt = (request.prompt_name or "").strip() or "terraform_module.j2"
+    prompt = (request.prompt_name or "").strip() or "jenkins_pipeline.j2"
 
     # Load GitHub credentials from environment
     gh_token = os.getenv("GH_TOKEN")

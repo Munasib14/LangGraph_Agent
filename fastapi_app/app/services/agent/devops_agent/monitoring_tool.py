@@ -1,33 +1,52 @@
 from .devops_types import DevOpsState
+from .logger_config import setup_logger
+logger = setup_logger("DevOpsLogger")
 
 def suggest_monitoring_integration(state: DevOpsState) -> DevOpsState:
     """
-    Appends monitoring and observability suggestions to Jenkins or infra code output.
-
+    Suggests monitoring and observability practices for Jenkins or infrastructure code.
+    
     Args:
         state (DevOpsState): Current DevOps agent state.
-
+    
     Returns:
         DevOpsState: Updated state with appended monitoring recommendations.
     """
-    ci_cd_script = state.Devops_output  # The CI/CD script to append suggestions to
-    pipeline_code = ci_cd_script  # Initialize pipeline_code with the current script
+    if not hasattr(state, "Devops_output") or not isinstance(state.Devops_output, str):
+        logger.error("Devops_output is missing or not a string.")
+        return state
 
-    recommendations = []
+    script = state.Devops_output
+    suggestions = []
 
-    # Look for signs of infrastructure where monitoring is useful
-    if "aws_instance" in ci_cd_script or "autoscaling" in ci_cd_script.lower():
-        recommendations.append("Consider integrating CloudWatch or Prometheus for monitoring EC2 instances and autoscaling events.")
-    
-    if "deploy" in ci_cd_script.lower():
-        recommendations.append("Add deployment monitoring hooks to track release success and error rates.")
-    
-    if "sh './gradlew test'" in ci_cd_script:
-        recommendations.append("Integrate test result reporting with Jenkins plugins or external dashboards.")
+    try:
+        # Infrastructure-level monitoring recommendations
+        if "aws_instance" in script or "autoscaling" in script.lower():
+            suggestions.append(
+                "Consider integrating AWS CloudWatch, Prometheus, or Grafana to monitor EC2 instances and autoscaling behavior."
+            )
 
-    # If there are any recommendations, append them to the CI/CD script
-    if recommendations:
-        pipeline_code += "\n\n// -- Monitoring Suggestions --\n" + "\n".join(f"// {s}" for s in recommendations)
+        # CI/CD monitoring practices
+        if "deploy" in script.lower():
+            suggestions.append(
+                "Add deployment monitoring hooks (e.g., Datadog, New Relic) to track release health and alert on failures."
+            )
 
-    state.Devops_output = pipeline_code  # Update the state with the modified script
+        if "sh './gradlew test'" in script:
+            suggestions.append(
+                "Integrate automated test reporting with Jenkins plugins (e.g., JUnit, Allure) or external dashboards."
+            )
+
+        # Append to script only if suggestions exist
+        if suggestions:
+            annotated_block = "\n\n// -- Monitoring & Observability Suggestions --\n" + \
+                              "\n".join(f"// - {s}" for s in suggestions)
+            state.Devops_output += annotated_block
+            logger.info("Monitoring suggestions appended to DevOps output.")
+        else:
+            logger.info("No monitoring suggestions detected based on the current script.")
+
+    except Exception as e:
+        logger.exception(f"Unexpected error during monitoring suggestion: {e}")
+
     return state

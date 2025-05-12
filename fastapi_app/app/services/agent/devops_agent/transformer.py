@@ -18,13 +18,13 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 # Initialize Groq client
 client = Groq(api_key=GROQ_API_KEY)
 
-def transform_infra(state: DevOpsState, prompt_template="terraform_module.j2") -> DevOpsState:
+def transform_infra(state: DevOpsState, prompt_template="jenkins_pipeline.j2") -> DevOpsState:
     """
     Uses Groq model to transform infrastructure code.
     """
     input_infra = state.Devops_input # Input infrastructure code (YAML, Terraform, etc.)
     
-    # ✅ Wrap input_infra in a dictionary for Jinja2
+    #  Wrap input_infra in a dictionary for Jinja2
     # context = {"infra_code": input_infra}
     context = {"infra_description": input_infra}
     

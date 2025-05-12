@@ -1,32 +1,43 @@
 import json
 from datetime import datetime
 from .devops_types import DevOpsState
+from .logger_config import setup_logger
+
+logger = setup_logger("DevOpsLogger")
+
+def validate_state(state: DevOpsState) -> bool:
+    return bool(state.Devops_input and state.Devops_output)
 
 def log_metadata(state: DevOpsState) -> DevOpsState:
     """
-    Logs metadata for the DevOps agent including timestamps and transformation details.
+    Logs metadata specific to the DevOps transformation process.
 
     Args:
-        state (DevOpsState): Current pipeline state.
+        state (DevOpsState): Pipeline state with input and output code.
 
     Returns:
-        DevOpsState: Unchanged state, after logging.
+        DevOpsState: The same state, after logging.
     """
+    if not validate_state(state):
+        logger.warning("Invalid state object. Missing required fields.")
+        return state
 
-    # Compose a final log object similar to DB agent format
-    final_log = {
-        "procedure_name": "devops_transform_infra",  # Analogous field
-        "original_code": state.Devops_input,
-        "converted_code": state.Devops_output,
-        "compatibility_flags": [],  # You can add logic to detect these later
-        "optimization_suggestions": [],
-        "comments": "",
-        "timestamp": str(datetime.utcnow()),
-        "status": "success"
-    }
+    try:
+        log_data = {
+            "procedure_name": "devops_transform_infra",
+            "original_code": state.Devops_input,
+            "converted_code": state.Devops_output,
+            "compatibility_flags": [],
+            "optimization_suggestions": [],
+            "comments": "",
+            "timestamp": datetime.utcnow().isoformat(),
+            "status": "success"
+        }
 
-    # Output to console (or replace with file write if needed)
-    print("\n===== DEVOPS AGENT FINAL OUTPUT =====\n")
-    print(json.dumps(final_log, indent=2))
+        logger.info("===== DEVOPS AGENT FINAL OUTPUT =====")
+        logger.info(json.dumps(log_data, indent=2))
+
+    except Exception as e:
+        logger.error("Error while logging DevOps metadata", exc_info=True)
 
     return state
