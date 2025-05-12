@@ -1,24 +1,62 @@
 
 # Transformed Infra
-```yml
-name: Build and Test
-on:
-  push:
-    branches:
-      - main
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Setup Java
-        uses: actions/setup-java@v2
-        with:
-          java-version: '11'
-      - name: Build and Test
-        run: ./gradlew build test
+The error message you're encountering indicates that the system is trying to load a template file named `jenkins_pipeline.j2` (which is likely a Jinja2 template) but cannot find it in the specified directory:
+
 ```
+C:\Users\Admin\Downloads\LangGraph_Agents\fastapi_app\app\services\agent\devops_agent\devops_prompts
+```
+
+To resolve this issue, you can follow these steps:
+
+### 1. Verify the Template File Exists
+- Ensure that the file `jenkins_pipeline.j2` actually exists in the directory:
+  ```
+  C:\Users\Admin\Downloads\LangGraph_Agents\fastapi_app\app\services\agent\devops_agent\devops_prompts
+  ```
+- If the file exists but is named differently, rename it to match exactly.
+
+### 2. Check the Path
+- Confirm that the path to the directory is correct. Sometimes, paths can be incorrectly specified. Ensure that the path is properly defined and accessible.
+
+### 3. Specify Correct Template Directory
+- If the template file exists but in a different directory, update your application or script to point to the correct directory where `jenkins_pipeline.j2` resides.
+
+### 4. Handle Relative Paths
+- If you're using a relative path, consider converting it to an absolute path to eliminate ambiguity.
+
+### 5. Template Configuration
+- Ensure that your application or script is configured to look for templates in the specified directory. This might involve checking environment variables or configuration files that specify where templates should be loaded from.
+
+### Example Python Code Snippet to Load Templates
+If you're using Flask or another framework that supports Jinja2 templates, ensure you're loading templates correctly. Here's a basic example:
+
+```python
+from jinja2 import Environment, FileSystemLoader
+
+# Specify the directory where your templates are located
+template_dir = "path/to/your/templates"
+
+# Create a Jinja2 environment and specify the template directory
+env = Environment(loader=FileSystemLoader(template_dir))
+
+# Load the template
+template = env.get_template("jenkins_pipeline.j2")
+
+# Now you can use the template
+print(template)
+```
+
+Replace `"path/to/your/templates"` with the actual path to your templates directory.
+
+### Troubleshooting
+- Double-check for typos in the filename and path.
+- Use the `os` module in Python to construct paths dynamically, which can help avoid mistakes:
+  ```python
+  import os
+  template_dir = os.path.join("path", "to", "your", "templates")
+  ```
+
+If after following these steps you're still encountering issues, the problem might lie in how your application or script specifies template locations or handles file paths. Review your code or the documentation of the framework you're using for more specific guidance.
 
 # -- Refactoring Suggestions --
 # Keep secrets and sensitive data in environment variables or secrets manager.
