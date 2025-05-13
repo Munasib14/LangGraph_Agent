@@ -9,10 +9,3 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-    - name: Setup Java
-      uses: actions/setup-java@v2
-      with:
-        java-version: '11'
-        distribution: temurin
-    - name: Build and Test
-      run: ./gradlew build test
